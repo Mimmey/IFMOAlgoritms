@@ -10,11 +10,15 @@ import java.util.Scanner;
 
 public class Main {
 
+    public static int cou;
+
     public static List<Integer> merge(List<Integer> lhs, List<Integer> rhs, int l, int r, BufferedWriter writer) throws IOException{
         int i = 0;
         int j = 0;
         ArrayList<Integer> arrayList = new ArrayList<>();
         while(i < lhs.size() || j < rhs.size()){
+            if(j == rhs.size() || i < lhs.size() && lhs.get(i) > rhs.get(j))
+                cou++;
             if(j == rhs.size() || i < lhs.size() && lhs.get(i) <= rhs.get(j)){
                 arrayList.add(lhs.get(i));
                 i++;
@@ -28,8 +32,6 @@ public class Main {
 //        for(int k : arrayList)
 //            writer.write(k + " ");
 //        writer.write("\n");
-
-        writer.write((l + 1) + " " + (r + 1) + " " + arrayList.get(0) + " " + arrayList.get(arrayList.size() - 1) + "\n");
 
         return arrayList;
     }
@@ -77,7 +79,7 @@ public class Main {
 
         List<Integer> arrayList = new ArrayList<Integer>();
         int n;
-
+        cou = 0;
         n = scanner.nextInt();
 
         for (int i = 0; i < n; i++) {
@@ -85,14 +87,14 @@ public class Main {
         }
 
         List sorted = new ArrayList();
-//        sorted = merge_sort(arrayList, 0, arrayList.size() - 1, writer);
+        sorted = merge_sort(arrayList, 0, arrayList.size() - 1, writer);
 
-//        for(int i: (ArrayList<Integer>)sorted) {
-//            writer.write(i + " ");
-//        }
+        for(int i: (ArrayList<Integer>)sorted) {
+            writer.write(i + " ");
+        }
 
-//        System.out.println(couInv);
-//        writer.write(couInv);
+        writer.write(cou + "");
+
 
         scanner.close();
         writer.close();
