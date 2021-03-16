@@ -10,15 +10,42 @@ import java.util.Scanner;
 
 public class Main {
 
-    public static int cou;
+    public static long cou;
 
     public static List<Integer> merge(List<Integer> lhs, List<Integer> rhs, int l, int r, BufferedWriter writer) throws IOException{
         int i = 0;
         int j = 0;
         ArrayList<Integer> arrayList = new ArrayList<>();
+
+//        writer.write("\nArr before: ");
+//        for(int k : lhs)
+//            writer.write(k + " ");
+//        for(int k : rhs)
+//            writer.write(k + " ");
+//        writer.write("\n");
+//
+//        writer.write("Lhs: ");
+//        for(int k : lhs)
+//            writer.write(k + " ");
+//        writer.write("\n");
+//
+//        writer.write("Rhs: ");
+//        for(int k : rhs)
+//            writer.write(k + " ");
+//        writer.write("\n");
+
         while(i < lhs.size() || j < rhs.size()){
-            if(j == rhs.size() || i < lhs.size() && lhs.get(i) > rhs.get(j))
-                cou++;
+            if(j == rhs.size() || i < lhs.size() && lhs.get(i) > rhs.get(j)) {
+
+                if(!(j == rhs.size()))
+                    cou += lhs.size() - i;
+
+//                if(j == rhs.size())
+//                    writer.write("J is out inv: " + lhs.get(i) + "\n");
+//                else {
+//                    writer.write("Right is less inv: " + lhs.get(i) + " " + rhs.get(j) + "\n");
+//                }
+            }
             if(j == rhs.size() || i < lhs.size() && lhs.get(i) <= rhs.get(j)){
                 arrayList.add(lhs.get(i));
                 i++;
@@ -28,10 +55,11 @@ public class Main {
             }
         }
 
-//        writer.write("Arr: ");
+//        writer.write("Arr after: ");
 //        for(int k : arrayList)
 //            writer.write(k + " ");
-//        writer.write("\n");
+//
+//        writer.write("\ncou: " + cou + "\n");
 
         return arrayList;
     }
@@ -89,12 +117,11 @@ public class Main {
         List sorted = new ArrayList();
         sorted = merge_sort(arrayList, 0, arrayList.size() - 1, writer);
 
-        for(int i: (ArrayList<Integer>)sorted) {
-            writer.write(i + " ");
-        }
+//        for(int i: (ArrayList<Integer>)sorted) {
+//            writer.write(i + " ");
+//        }
 
         writer.write(cou + "");
-
 
         scanner.close();
         writer.close();
