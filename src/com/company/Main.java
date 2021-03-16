@@ -121,7 +121,7 @@ public class Main {
 //            writer.write(i + " ");
 //        }
 
-        writer.write(cou + "");
+        writer.write(cou + "" + "");
 
         scanner.close();
         writer.close();
