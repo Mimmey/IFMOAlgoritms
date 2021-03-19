@@ -2,6 +2,7 @@ package com.company;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Scanner;
 
 
@@ -17,10 +18,6 @@ public class Main {
         int n;
         n = scanner.nextInt();
 
-//        for (int i = 0; i < n; i++) {
-//            arrayList.add(i + 1);
-//        }
-
         arrayList.add(1);
         arrayList.add(2);
 
@@ -30,13 +27,23 @@ public class Main {
             int removed = arrayList.get(index);
             arrayList.remove(index);
             arrayList.add(removed);
+
+            writer.write("n = " + i + ": ");
+            if(n == 1)
+                writer.write('1');
+            else for(int j: arrayList) {
+                writer.write(j + " ");
+            }
+
+            writer.write('\n');
+
         }
 
-        if(n == 1)
-            writer.write('1');
-        else for(int i: arrayList) {
-            writer.write(i + " ");
-        }
+//        if(n == 1)
+//            writer.write('1');
+//        else for(int i: arrayList) {
+//            writer.write(i + " ");
+//        }
 
         scanner.close();
         writer.close();
