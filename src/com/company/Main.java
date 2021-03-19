@@ -1,9 +1,7 @@
 package com.company;
 
-import javax.annotation.processing.FilerException;
 import java.io.*;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Scanner;
 
 
@@ -23,10 +21,20 @@ public class Main {
 //            arrayList.add(i + 1);
 //        }
 
-        for(int i = 1; i <= n; i++)
-            arrayList.add(arrayList.size()/2, i);
+        arrayList.add(1);
+        arrayList.add(2);
 
-        for(int i: arrayList) {
+        for(int i = 3; i <= n; i++) {
+            arrayList.add(arrayList.size() / 2, i);
+            int index = arrayList.size() / 2 + arrayList.size() % 2;
+            int removed = arrayList.get(index);
+            arrayList.remove(index);
+            arrayList.add(removed);
+        }
+
+        if(n == 1)
+            writer.write('1');
+        else for(int i: arrayList) {
             writer.write(i + " ");
         }
 
