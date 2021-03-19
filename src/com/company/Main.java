@@ -42,8 +42,11 @@ public class Main {
         writer.write("pivot: " + pivot + "\n");
         writer.write("divisor: " + divisor + "\n\n");
 
-        quickSort(lhs, divisor - 1, writer);
-        quickSort(divisor, rhs, writer);
+        if(lhs < divisor)
+            quickSort(lhs, divisor - 1, writer);
+        if(rhs > divisor)
+            quickSort(divisor, rhs, writer);
+
     }
 
     public static void main(String[] args) throws IOException {
