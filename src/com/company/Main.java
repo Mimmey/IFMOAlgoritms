@@ -18,6 +18,49 @@ public class Main {
         int n;
         n = scanner.nextInt();
 
+//        arrayList.add(3);
+//        arrayList.add(2);
+//
+//        switch(n){
+//            case 1:
+//                writer.write("1");
+//                break;
+//            case 2:
+//                writer.write("1 2");
+//                break;
+//            case 3:
+//                writer.write("1 3 2");
+//                break;
+//            case 4:
+//                writer.write("1 4 2 3");
+//                break;
+//            default:
+//                writer.write("1 ");
+//
+//                for(int i = 4; i <= n; i += 2)
+//                    writer.write(i + " ");
+//
+//                for(int i = 5; i <= n; i += 2) {
+//                    arrayList.add(arrayList.get(0));
+//                    arrayList.remove(0);
+//
+//                    arrayList.add(arrayList.get(0));
+//                    arrayList.remove(0);
+//
+//
+//                    arrayList.add(0, i);
+//                }
+//
+//                if(n % 2 == 0){
+//                    arrayList.add(arrayList.get(0));
+//                    arrayList.remove(0);
+//                }
+//
+//
+//                for(int i : arrayList)
+//                    writer.write(i + " ");
+//        }
+
         arrayList.add(1);
         arrayList.add(2);
 
