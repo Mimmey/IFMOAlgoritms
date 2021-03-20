@@ -41,7 +41,7 @@ public class Main {
     }
 
     public static int runBinarySearchIteratively(int k, int lhs, int rhs) {
-        int index = Integer.MAX_VALUE;
+        int index = arrayList.size();
 
         while (lhs <= rhs) {
             int mid = (lhs + rhs) / 2;
@@ -75,22 +75,64 @@ public class Main {
         b = scanner.nextInt();
         c = scanner.nextInt();
 
+//        int t1, t2;
+//        t1 = scanner.nextInt();
+//        t2 = scanner.nextInt();
+//
+//        arrayList.add(t1);
+//        arrayList.add(t2);
+//
+//        for(int i = 2; i < k2; i++)
+//            arrayList.add(a * arrayList.get(arrayList.size() - 2) + b * arrayList.get(arrayList.size() - 1) + c);
+//
+//        int a1 = arrayList.get(arrayList.size() - 2);
+//        int a2 = arrayList.get(arrayList.size() - 1);
+//
+//        qSort(0, arrayList.size() - 1, writer);
+
         int t1, t2;
         t1 = scanner.nextInt();
         t2 = scanner.nextInt();
 
+        int a1 = t1;
+        int a2 = t2;
+
         arrayList.add(t1);
-        arrayList.add(t2);
 
-        for(int i = 2; i < k2; i++)
-            arrayList.add(a * arrayList.get(arrayList.size() - 2) + b * arrayList.get(arrayList.size() - 1) + c);
+        if(t2 <= t1)
+            arrayList.add(0, t2);
+        else
+            arrayList.add(t2);
 
-        int a1 = arrayList.get(arrayList.size() - 2);
-        int a2 = arrayList.get(arrayList.size() - 1);
+        for(int i = 2; i < k2; i++) {
+            int a3 = a * a1 + b * a2 + c;
 
-        qSort(0, arrayList.size() - 1, writer);
+//            writer.write("a1: " + a1 + "\n");
+//            writer.write("a2: " + a2 + "\n");
+//            writer.write("a3: " + a3 + "\n");
+//
+//            writer.write("Arr before getting a3: ");
+//            for(int j : arrayList)
+//                writer.write(j + " ");
+//            writer.write("\n");
 
-//        writer.write("Arr before cycle: ");
+            int pos = runBinarySearchIteratively(a3, 0, arrayList.size() - 1);
+            arrayList.add(pos, a3);
+
+//            writer.write("Arr after getting a3: ");
+//            for(int j : arrayList)
+//                writer.write(j + " ");
+//            writer.write("\n");
+
+            a1 = a2;
+            a2 = a3;
+
+//            writer.write("a1 after: " + a1 + "\n");
+//            writer.write("a2 after: " + a2 + "\n");
+//            writer.write("a3 after: " + a3 + "\n");
+        }
+
+//        writer.write("Arr before cycling: ");
 //        for(int i : arrayList)
 //            writer.write(i + " ");
 //        writer.write("\n\n");
@@ -136,8 +178,15 @@ public class Main {
 //            writer.write("a3 after: " + a3 + "\n");
         }
 
-        for(int i = k1 - 1; i < k2; i++)
+        if(k1 == k2)
+            writer.write(arrayList.get(k1 - 1) + "");
+        else for(int i = k1 - 1; i < arrayList.size(); i++)
             writer.write(arrayList.get(i) + " ");
+
+//        writer.write("Arr after: ");
+//        for(int j : arrayList)
+//            writer.write(j + " ");
+//        writer.write("\n");
 
         scanner.close();
         writer.close();
