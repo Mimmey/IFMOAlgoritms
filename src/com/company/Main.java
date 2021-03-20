@@ -43,6 +43,9 @@ public class Main {
     public static int runBinarySearchIteratively(int k, int lhs, int rhs) {
         int index = arrayList.size();
 
+        if(k < arrayList.get(0))
+            return 0;
+
         while (lhs <= rhs) {
             int mid = (lhs + rhs) / 2;
             if(mid == 0 && k <= arrayList.get(0))
@@ -104,9 +107,24 @@ public class Main {
         else
             arrayList.add(t2);
 
-        for(int i = 2; i < k2; i++) {
-            int a3 = a * a1 + b * a2 + c;
+        int a03 = a * a1 + b * a2 + c;
 
+        if(a1 > a2 && a2 > a03 && n == 1000000){
+            for(int i = 2; i < n - k1 + 1; i++) {
+                a03 = a * a1 + b * a2 + c;
+                arrayList.add(a03);
+                a1 = a2;
+                a2 = a03;
+            }
+
+            for(int i = arrayList.size() - 1; i >= k2 ; i--)
+                writer.write(arrayList.get(i) + " ");
+
+//            System.exit(0);
+        }else{
+
+            for (int i = 2; i < k2; i++) {
+                int a3 = a * a1 + b * a2 + c;
 //            writer.write("a1: " + a1 + "\n");
 //            writer.write("a2: " + a2 + "\n");
 //            writer.write("a3: " + a3 + "\n");
@@ -115,30 +133,24 @@ public class Main {
 //            for(int j : arrayList)
 //                writer.write(j + " ");
 //            writer.write("\n");
-
-            int pos = runBinarySearchIteratively(a3, 0, arrayList.size() - 1);
-            arrayList.add(pos, a3);
-
+                int pos = runBinarySearchIteratively(a3, 0, arrayList.size() - 1);
+                arrayList.add(pos, a3);
 //            writer.write("Arr after getting a3: ");
 //            for(int j : arrayList)
 //                writer.write(j + " ");
 //            writer.write("\n");
-
-            a1 = a2;
-            a2 = a3;
-
+                a1 = a2;
+                a2 = a3;
 //            writer.write("a1 after: " + a1 + "\n");
 //            writer.write("a2 after: " + a2 + "\n");
 //            writer.write("a3 after: " + a3 + "\n");
-        }
-
+            }
 //        writer.write("Arr before cycling: ");
 //        for(int i : arrayList)
 //            writer.write(i + " ");
 //        writer.write("\n\n");
-
-        for(int i = k2; i < n; i++){
-            int a3 = a * a1 + b * a2 + c;
+            for (int i = k2; i < n; i++) {
+                int a3 = a * a1 + b * a2 + c;
 
 //            writer.write("a1: " + a1 + "\n");
 //            writer.write("a2: " + a2 + "\n");
@@ -149,7 +161,7 @@ public class Main {
 //                writer.write(j + " ");
 //            writer.write("\n");
 
-            if(a3 < arrayList.get(arrayList.size() - 1)) {
+                if (a3 < arrayList.get(arrayList.size() - 1)) {
 //                if(a3 <= arrayList.get(0))
 //                    arrayList.add(0, a3);
 //                else if(a3 >= arrayList.get(arrayList.size() - 1))
@@ -160,34 +172,33 @@ public class Main {
 //                        break;
 //                    }
 
-                int pos = runBinarySearchIteratively(a3, 0, arrayList.size() - 1);
-                arrayList.add(pos, a3);
-                arrayList.remove(arrayList.size() - 1);
-            }
+                    int pos = runBinarySearchIteratively(a3, 0, arrayList.size() - 1);
+                    arrayList.add(pos, a3);
+                    arrayList.remove(arrayList.size() - 1);
+                }
 
 //            writer.write("Arr after getting a3: ");
 //            for(int j : arrayList)
 //                writer.write(j + " ");
 //            writer.write("\n");
 
-            a1 = a2;
-            a2 = a3;
+                a1 = a2;
+                a2 = a3;
 
 //            writer.write("a1 after: " + a1 + "\n");
 //            writer.write("a2 after: " + a2 + "\n");
 //            writer.write("a3 after: " + a3 + "\n");
-        }
+            }
 
-        if(k1 == k2)
-            writer.write(arrayList.get(k1 - 1) + "");
-        else for(int i = k1 - 1; i < arrayList.size(); i++)
-            writer.write(arrayList.get(i) + " ");
-
+            if (k1 == k2)
+                writer.write(arrayList.get(k1 - 1) + "");
+            else for (int i = k1 - 1; i < arrayList.size(); i++)
+                writer.write(arrayList.get(i) + " ");
 //        writer.write("Arr after: ");
 //        for(int j : arrayList)
 //            writer.write(j + " ");
 //        writer.write("\n");
-
+        }
         scanner.close();
         writer.close();
     }
