@@ -11,32 +11,71 @@ import static com.sun.tools.javac.jvm.ByteCodes.swap;
 
 public class Main {
 
+    public static final int N = 500;
+    public static final int N1 = 10000;
 
     public static void main(String[] args) throws IOException {
         Scanner scanner = new Scanner(new File("input.txt"));
         BufferedWriter writer = new BufferedWriter(new FileWriter("output.txt"));
 
-
         int n = scanner.nextInt();
-        int[] stack = new int[1000000];
-        int top = 0;
 
-        for(int i = 0; i < n; i++){
-            char c = scanner.next().charAt(0);
-            switch (c) {
-                case '+':
-                    int t = scanner.nextInt();
-                    stack[top] = t;
-                    top++;
+        for(int i = 0; i < n; i++) {
+            char[] stack = new char[N1];
+            int top = 0;
+
+            String str = scanner.next();
+            boolean is = true;
+
+            for (int j = 0; j < str.length(); j++) {
+                if(is == false)
                     break;
-                case '-':
-                    writer.write(stack[top - 1] + "\n");
-                    top--;
-                    break;
+                switch (str.charAt(j)) {
+                    case '[':
+                        stack[top] = '[';
+                        top++;
+                        break;
+                    case '(':
+                        stack[top] = '(';
+                        top++;
+                        break;
+                    case ']':
+                        if(top == 0) {
+                            writer.write("NO\n");
+                            is = false;
+                            continue;
+                        }
+                        if (stack[top - 1] == '[') {
+                            top--;
+                            break;
+                        } else {
+                            writer.write("NO\n");
+                            is = false;
+                            continue;
+                        }
+                    case ')':
+                        if(top == 0) {
+                            writer.write("NO\n");
+                            is = false;
+                            continue;
+                        }
+                        if (stack[top - 1] == '(') {
+                            top--;
+                            break;
+                        } else {
+                            writer.write("NO\n");
+                            is = false;
+                            continue;
+                        }
+                    }
             }
+            if(is && top != 0)
+                writer.write("NO\n");
+            else if(is)
+                writer.write("YES\n");
         }
 
-
+//
         scanner.close();
         writer.close();
     }
