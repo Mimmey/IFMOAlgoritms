@@ -22,6 +22,7 @@ public class Main {
         int head = 0;
         int tail = 0;
 
+        //
         for(int i = 0; i < n; i++){
             char c = scanner.next().charAt(0);
             switch (c) {
