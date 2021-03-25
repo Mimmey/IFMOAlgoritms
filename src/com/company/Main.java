@@ -63,8 +63,12 @@ public class Main {
         arrayList.add(t1);
         arrayList.add(t2);
 
-        for(int i = 2; i < n; i++)
-            arrayList.add(a * arrayList.get(arrayList.size() - 2) + b * arrayList.get(arrayList.size() - 1) + c);
+        int amount = k2 - k1 + 1;
+
+        for(int i = 2; i < n; i++) {
+            int t = a * arrayList.get(arrayList.size() - 2) + b * arrayList.get(arrayList.size() - 1) + c;
+            arrayList.add(t);
+        }
 
         qSort(0, n - 1, writer);
 
