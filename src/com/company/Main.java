@@ -14,25 +14,25 @@ public class Main {
 
 
         int n = scanner.nextInt();
-        int[] stack = new int[1000000];
-        int top = 0;
+        int[] queue = new int[1000000];
+        int head = 0;
+        int tail = 1;
 
         for(int i = 0; i < n; i++){
             char c = scanner.next().charAt(0);
             switch (c) {
                 case '+':
                     int t = scanner.nextInt();
-                    stack[top] = t;
-                    top++;
+                    queue[tail - 1] = t;
+                    tail++;
                     break;
                 case '-':
-                    writer.write(stack[top - 1] + "\n");
-                    top--;
+                    writer.write(queue[head] + "\n");
+                    head++;
                     break;
             }
         }
 
-//
         scanner.close();
         writer.close();
     }
