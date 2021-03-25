@@ -1,1 +1,4 @@
-1
+A after changing: 1 4 7 9 
+B after changing: 2 7 8 11 
+Array Of Multiples: 2 7 8 11 8 28 32 44 14 49 56 77 18 63 72 99 
+0

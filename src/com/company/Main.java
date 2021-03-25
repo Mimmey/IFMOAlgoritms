@@ -3,6 +3,7 @@ package com.company;
 import javax.annotation.processing.FilerException;
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 
@@ -10,116 +11,120 @@ import java.util.Scanner;
 
 public class Main {
 
-    public static long cou;
+    public static ArrayList<Integer> sort(ArrayList<Integer> a, int max, BufferedWriter writer) throws IOException {
+        ArrayList<Integer> a1 = new ArrayList<Integer>();
+        ArrayList<Integer> c = new ArrayList<Integer>();
 
-    public static List<Integer> merge(List<Integer> lhs, List<Integer> rhs, int l, int r, BufferedWriter writer) throws IOException{
-        int i = 0;
-        int j = 0;
-        ArrayList<Integer> arrayList = new ArrayList<>();
+        for(int i = 0; i < max + 1; i++)
+            c.add(0);
 
-//        writer.write("\nArr before: ");
-//        for(int k : lhs)
-//            writer.write(k + " ");
-//        for(int k : rhs)
-//            writer.write(k + " ");
-//        writer.write("\n");
-//
-//        writer.write("Lhs: ");
-//        for(int k : lhs)
-//            writer.write(k + " ");
-//        writer.write("\n");
-//
-//        writer.write("Rhs: ");
-//        for(int k : rhs)
-//            writer.write(k + " ");
+        for(int i = 0; i < a.size(); i++)
+            a1.add(0);
+
+        for(int i = 0; i < a.size(); i++)
+            c.set(a.get(i), c.get(a.get(i)) + 1);
+
+//        writer.write("C at first: ");
+//        for(int i : c)
+//            writer.write(i + " ");
 //        writer.write("\n");
 
-        while(i < lhs.size() || j < rhs.size()){
-            if(j == rhs.size() || i < lhs.size() && lhs.get(i) > rhs.get(j)) {
+        for(int i = 1; i < c.size(); i++)
+            c.set(i, c.get(i - 1) + c.get(i));
 
-                if(!(j == rhs.size()))
-                    cou += lhs.size() - i;
+//        writer.write("C after sort: ");
+//        for(int i : c)
+//            writer.write(i + " ");
+//        writer.write("\n");
 
-//                if(j == rhs.size())
-//                    writer.write("J is out inv: " + lhs.get(i) + "\n");
-//                else {
-//                    writer.write("Right is less inv: " + lhs.get(i) + " " + rhs.get(j) + "\n");
-//                }
-            }
-            if(j == rhs.size() || i < lhs.size() && lhs.get(i) <= rhs.get(j)){
-                arrayList.add(lhs.get(i));
-                i++;
-            }else{
-                arrayList.add(rhs.get(j));
-                j++;
-            }
+        for(int i = a.size() - 1; i >= 0; i--){
+            a1.set(c.get(a.get(i)) - 1, a.get(i));
+            c.set(a.get(i), c.get(a.get(i)) - 1);
         }
 
-//        writer.write("Arr after: ");
-//        for(int k : arrayList)
-//            writer.write(k + " ");
-//
-//        writer.write("\ncou: " + cou + "\n");
-
-        return arrayList;
-    }
-
-    public static List<Integer> merge_sort(List<Integer> arrayList, int l, int r, BufferedWriter writer) throws IOException{
-        if(arrayList.size() == 1)
-            return arrayList;
-
-        List<Integer> lhs = new ArrayList<>();
-        lhs = new ArrayList<Integer> (arrayList.subList(0, arrayList.size() / 2));
-
-
-        List<Integer> rhs = new ArrayList<>();
-        rhs = new ArrayList<Integer> (arrayList.subList(arrayList.size() / 2, arrayList.size()));
-
-//        writer.write("\n");
-//        writer.write("lhs: \n");
-//        for(int k : lhs)
-//            writer.write(k + " ");
+//        writer.write("C after: ");
+//        for(int i : c)
+//            writer.write(i + " ");
 //        writer.write("\n");
 //
-//        writer.write("rhs: \n");
-//        for(int k : rhs)
-//            writer.write(k + " ");
-//        writer.write("\n");
-//
-//        writer.write("l: " + l + ", " + "r: " + r + "\n");
+//        writer.write("a1 after: ");
+//        for(int i : a1)
+//            writer.write(i + " ");
 //        writer.write("\n");
 
-        //System.out.println((l + 1) + " " +  (l + arrayList.size() / 2) + " " + arrayList.get(0) + " " + arrayList.get(arrayList.size() / 2 - 1));
-        lhs = merge_sort(lhs, l, l + arrayList.size() / 2 - 1, writer);
-
-        //System.out.println((l + arrayList.size() / 2 + 1) + " " + (r + 1) + " " + arrayList.get(arrayList.size() / 2) + " " + arrayList.get(arrayList.size() - 1));
-        rhs = merge_sort(rhs, l + arrayList.size() / 2, r, writer);
-        try {
-            return merge(lhs, rhs, l, r, writer);
-        }catch (Exception e){}
-
-        return null;
+        return a1;
     }
 
     public static void main(String[] args) throws IOException {
         Scanner scanner = new Scanner(new File("input.txt"));
         BufferedWriter writer = new BufferedWriter(new FileWriter("output.txt"));
 
-        List<Integer> arrayList = new ArrayList<Integer>();
-        int n;
-        cou = 0;
-        n = scanner.nextInt();
+        ArrayList<Integer> a = new ArrayList<Integer>();
+        ArrayList<Integer> b = new ArrayList<Integer>();
 
-        for (int i = 0; i < n; i++) {
-            arrayList.add(scanner.nextInt());
+        int n, m;
+        n = scanner.nextInt();
+        m = scanner.nextInt();
+
+        int maxa = 0, maxb = 0;
+
+        for(int i = 0; i < n; i++){
+            int t = scanner.nextInt();
+            a.add(t);
+            if(t > maxa)
+                maxa = t;
         }
 
-        List sorted = new ArrayList();
-        sorted = merge_sort(arrayList, 0, arrayList.size() - 1, writer);
+        for(int i = 0; i < m; i++){
+            int t = scanner.nextInt();
+            b.add(t);
+            if(t > maxb);
+                maxb = t;
+        }
 
-//        for(int i: (ArrayList<Integer>)sorted) {
+        ArrayList<Integer> c = new ArrayList<Integer>();
+
+        int maxc = 0;
+
+        for(int i = 0; i < a.size(); i++)
+            for(int j = 0; j < b.size(); j++) {
+                int t = a.get(i) * b.get(j);
+                c.add(t);
+                if(t > maxc)
+                    maxc = t;
+            }
+
+//        c = sort(c, maxc, writer);
+
+        a = sort(a, maxa, writer);
+        b = sort(b, maxb, writer);
+
+        writer.write("A after changing: ");
+        for(int i : a)
+            writer.write(i + " ");
+        writer.write("\n");
+
+        writer.write("B after changing: ");
+        for(int i : b)
+            writer.write(i + " ");
+        writer.write("\n");
+
+        writer.write("Array Of Multiples: ");
+        for(int i = 0; i < a.size(); i++)
+            for(int j = 0; j < b.size(); j++)
+                writer.write(a.get(i) * b.get(j) + " ");
+        writer.write("\n");
+
+//        writer.write("Array Of Multiples: ");
+//
+//        for(int i : c)
 //            writer.write(i + " ");
-//        }
+//        writer.write("\n");
+
+        int cou = 0;
+
+//        for(int i = 0; i < c.size(); i += 10)
+//            cou += c.get(i);
 
         writer.write(cou + "");
 
