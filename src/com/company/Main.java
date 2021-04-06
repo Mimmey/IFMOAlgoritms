@@ -1,43 +1,45 @@
 package com.company;
 
-import javax.annotation.processing.FilerException;
 import java.io.*;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Scanner;
 
-import static com.sun.tools.javac.jvm.ByteCodes.swap;
 
 
 public class Main {
 
-    public static ArrayList<Integer> arrayList = new ArrayList<>();
+    //public static ArrayList<Integer> arrayList = new ArrayList<>();
+    public static int[] arrayList;
+    public static int k1;
+    public static int k2;
 
     public static void qSort(int lhs, int rhs, BufferedWriter writer){
         int i, j, pivot, temp;
 
-        pivot = arrayList.get((lhs + rhs) / 2);
+        pivot = arrayList[(lhs + rhs) / 2];
         i = lhs;
         j = rhs;
 
         do{
-            while(arrayList.get(i) < pivot)
+            while(arrayList[i] < pivot)
                 i++;
-            while(arrayList.get(j) > pivot)
+            while(arrayList[j] > pivot)
                 j--;
             if(i <= j) {
-                temp = arrayList.get(i);
-                arrayList.set(i, arrayList.get(j));
-                arrayList.set(j, temp);
+                temp = arrayList[i];
+                arrayList[i] = arrayList[j];
+                arrayList[j] = temp;
                 i++;
                 j--;
             }
         }while(j >= i);
 
         if(lhs < j)
-            qSort(lhs, j, writer);
+            if (k1 - 1 >= lhs && k1 - 1<= j || k2 - 1 >= lhs && k2 - 1 <= j || lhs >= k1 - 1 && j <= k2- 1)
+                qSort(lhs, j, writer);
         if(i < rhs)
-            qSort(i, rhs, writer);
+            if (k1 - 1 >= i && k1 - 1<= rhs || k2 - 1 >= i && k2 - 1 <= rhs || i >= k1 - 1 && rhs <= k2- 1)
+                qSort(i, rhs, writer);
     }
 
     public static void main(String[] args) throws IOException {
@@ -47,7 +49,6 @@ public class Main {
         int n;
         n = scanner.nextInt();
 
-        int k1, k2;
         k1 = scanner.nextInt();
         k2 = scanner.nextInt();
 
@@ -60,16 +61,35 @@ public class Main {
         t1 = scanner.nextInt();
         t2 = scanner.nextInt();
 
-        arrayList.add(t1);
-        arrayList.add(t2);
+        arrayList = new int[n];
+
+//        arrayList.add(t1);
+//        arrayList.add(t2);
+//
+//        for(int i = 2; i < n; i++)
+//            arrayList.add(a * arrayList.get(arrayList.size() - 2) + b * arrayList.get(arrayList.size() - 1) + c);
+//
+//        qSort(0, n - 1, writer);
+//
+//        for(int i = k1; i <= k2; i++)
+//            writer.write("" + arrayList.get(i - 1) + " ");
+
+        arrayList[0] = t1;
+        arrayList[1] = t2;
 
         for(int i = 2; i < n; i++)
-            arrayList.add(a * arrayList.get(arrayList.size() - 2) + b * arrayList.get(arrayList.size() - 1) + c);
+            arrayList[i] = a * arrayList[i - 2] + b * arrayList[i - 1] + c;
 
         qSort(0, n - 1, writer);
 
+//        StringBuilder res = new StringBuilder ("");
+//        for (int k = k1; k1 <= k2; k++)
+//            res.append("${a[k]} ");
+//
+//        writer.write(res.substring(0, res.length() - 1));
+
         for(int i = k1; i <= k2; i++)
-            writer.write("" + arrayList.get(i - 1) + " ");
+           writer.write("" + arrayList[i - 1] + " ");
 
         scanner.close();
         writer.close();
