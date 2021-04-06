@@ -32,9 +32,16 @@ public class Main {
                     tail++;
                     break;
                 case '-':
-                    writer.write(queue[head] + "\n");
+                    //writer.write(queue[head] + "\n");
                     head++;
                     break;
+                case '?':
+                    int min = queue[head];
+                    for(int j = head + 1; j < tail - head - 1; j++){
+                        if(queue[j] < min)
+                            min = queue[j];
+                    }
+                    writer.write(min + "\n");
             }
         }
 
