@@ -30,8 +30,6 @@ public class Main {
             }
         }
 
-//        5
-//        1 3 2 5 4
 
         writer.write(is ? "YES" : "NO");
 
