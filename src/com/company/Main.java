@@ -2,6 +2,7 @@ package com.company;
 
 import javax.annotation.processing.FilerException;
 import java.io.*;
+import java.lang.reflect.Array;
 import java.util.*;
 
 
@@ -12,27 +13,27 @@ public class Main {
         Scanner scanner = new Scanner(new File("input.txt"));
         BufferedWriter writer = new BufferedWriter(new FileWriter("output.txt"));
 
+        int n;
+        n = scanner.nextInt();
+        int array[] = new int[n];
 
-        int n = scanner.nextInt();
-        int[] stack = new int[1000000];
-        int top = 0;
+        for(int i = 0; i < n; i++)
+            array[i] = scanner.nextInt();
 
-        for(int i = 0; i < n; i++){
-            char c = scanner.next().charAt(0);
-            switch (c) {
-                case '+':
-                    int t = scanner.nextInt();
-                    stack[top] = t;
-                    top++;
-                    break;
-                case '-':
-                    writer.write(stack[top - 1] + "\n");
-                    top--;
-                    break;
+        boolean is = true;
+
+        for(int i = 0; i < n; i++) {
+            if (2 * i + 1 < n && array[2 * i + 1] < array[i] || 2 * i + 2 < n && array[2 * i + 2] < array[i]) {
+//                writer.write(i + " ");
+                is = false;
+                break;
             }
         }
 
-        
+//        5
+//        1 3 2 5 4
+
+        writer.write(is ? "YES" : "NO");
 
         scanner.close();
         writer.close();
