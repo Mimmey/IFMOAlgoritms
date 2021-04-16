@@ -9,53 +9,61 @@ import java.util.*;
 public class Main {
 
     public static int top;
-    public static final int INF = -2000000000;
+    public static final int INF = -2147483648;
 
-    public static void minHeapify(int[] array, int index){
+    public static void minHeapify(int[][] array, int index){
         int left = index * 2 + 1;
         int right = index * 2 + 2;
         int indMin = index;
 
-        if(left < top && array[left] < array[indMin])
+        if(left < top && array[left][0] < array[indMin][0])
             indMin = left;
 
-        if(right < top && array[right] < array[indMin])
+        if(right < top && array[right][0] < array[indMin][0])
             indMin = right;
 
         if(indMin != index){
-            int t = array[indMin];
-            array[indMin] = array[index];
-            array[index] = t;
+            int t = array[indMin][0];
+            int t2 = array[indMin][1];
+            array[indMin][0] = array[index][0];
+            array[indMin][1] = array[index][1];
+            array[index][0] = t;
+            array[index][1] = t2;
             minHeapify(array, indMin);
         }
     }
 
-    public static void insert(int[] array, int a){
+    public static void insert(int[][] array, int a, int i){
         top++;
-        array[top - 1] = INF;
+        array[top - 1][0] = INF;
+        array[top - 1][1] = i;
         heapDecreaseKey(array, top - 1, a);
     }
 
-    public static int extractMin(int[] array){
+    public static int extractMin(int[][] array){
         if(top < 1)
             return INF;
         else {
-            int min = array[0];
-            array[0] = array[top - 1];
+            int min = array[0][0];
+            array[0][0] = array[top - 1][0];
+            array[0][1] = array[top - 1][1];
             top--;
             minHeapify(array, 0);
             return min;
         }
     }
 
-    public static void heapDecreaseKey(int[] array, int index, int replacement){
-        array[index] = replacement;
+    public static void heapDecreaseKey(int[][] array, int index, int replacement){
+        array[index][0] = replacement;
 
-        while(index > 0 && array[(index + 1) / 2 - 1] > array[index]){
-            int t = array[index];
-            array[index] = array[(index + 1) / 2 - 1];
-            array[(index + 1) / 2 - 1] = t;
-            index = (index + 1) / 2 - 1;
+        while(index > 0 && array[(index - 1) / 2][0] > array[index][0]){
+            int t = array[index][0];
+            int t2 = array[index][1];
+            array[index][0] = array[(index - 1) / 2][0];
+            array[index][1] = array[(index - 1) / 2][1];
+            array[(index - 1) / 2][0] = t;
+            array[(index - 1) / 2][1] = t2;
+            index = (index - 1) / 2;
         }
     }
 
@@ -66,7 +74,7 @@ public class Main {
         int n;
         n = scanner.nextInt();
 
-        int array[] = new int[1000000];
+        int array[][] = new int[1000000][2];
         top = 0;
 
         ArrayList<String> input = new ArrayList<String>();
@@ -91,18 +99,25 @@ public class Main {
                     break;
                 case 'A':
                     int a = Integer.parseInt(str);
-                    insert(array, a);
+                    insert(array, a, i);
                     break;
                 case 'D':
                     int indexOfString = Integer.parseInt(str.substring(0, str.indexOf(' ')));
                     int number = Integer.parseInt(str.substring(str.indexOf(' ') + 1));
-                    String command = input.get(indexOfString - 1);
-                    int needToBeReplaced = Integer.parseInt(command.substring(2));
+//                    String command = input.get(indexOfString - 1);
+//                    int needToBeReplaced = Integer.parseInt(command.substring(2));
+//                    int index = 0;
+//
+//                    for(int j = 0; j < top; j++)
+//                        if(array[j][0] == needToBeReplaced)
+//                            index = j;
+                    indexOfString--;
                     int index = 0;
-
                     for(int j = 0; j < top; j++)
-                        if(array[j] == needToBeReplaced)
+                        if(array[j][1] == indexOfString) {
                             index = j;
+                            break;
+                        }
 
                     heapDecreaseKey(array, index, number);
                     break;
