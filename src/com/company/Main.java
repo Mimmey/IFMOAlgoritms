@@ -12,24 +12,29 @@ public class Main {
     public static final int INF = -2147483648;
 
     public static void minHeapify(int[][] array, int index){
-        int left = index * 2 + 1;
-        int right = index * 2 + 2;
-        int indMin = index;
 
-        if(left < top && array[left][0] < array[indMin][0])
-            indMin = left;
+        while(true) {
+            int left = index * 2 + 1;
+            int right = index * 2 + 2;
+            int indMin = index;
 
-        if(right < top && array[right][0] < array[indMin][0])
-            indMin = right;
+            if (left < top && array[left][0] < array[indMin][0])
+                indMin = left;
 
-        if(indMin != index){
-            int t = array[indMin][0];
-            int t2 = array[indMin][1];
-            array[indMin][0] = array[index][0];
-            array[indMin][1] = array[index][1];
-            array[index][0] = t;
-            array[index][1] = t2;
-            minHeapify(array, indMin);
+            if (right < top && array[right][0] < array[indMin][0])
+                indMin = right;
+
+            if(indMin == index)
+                break;
+            else {
+                int t = array[indMin][0];
+                int t2 = array[indMin][1];
+                array[indMin][0] = array[index][0];
+                array[indMin][1] = array[index][1];
+                array[index][0] = t;
+                array[index][1] = t2;
+                index = indMin;
+            }
         }
     }
 
@@ -77,17 +82,22 @@ public class Main {
         int array[][] = new int[1000000][2];
         top = 0;
 
-        ArrayList<String> input = new ArrayList<String>();
+//        ArrayList<String> input = new ArrayList<String>();
+//        String[] input = new String[1000000];
+        scanner.nextLine();
 
-        for(int i = 0; i <= n; i++){
-            input.add(scanner.nextLine());
-        }
+//        for(int i = 0; i < n; i++){
+//            input.add(scanner.nextLine());
+//            input[i] = scanner.nextLine();
+//        }
 
-        input.remove(0);
+//        input.remove(0);
 
         for(int i = 0; i < n; i++){
-            String str = input.get(i);
-            char c = input.get(i).charAt(0);
+//            String str = input.get(i);
+//            String str = input[i];
+            String str = scanner.nextLine();
+            char c = str.charAt(0);
 
             if(!str.equals("X"))
                 str = str.substring(2);
@@ -104,13 +114,6 @@ public class Main {
                 case 'D':
                     int indexOfString = Integer.parseInt(str.substring(0, str.indexOf(' ')));
                     int number = Integer.parseInt(str.substring(str.indexOf(' ') + 1));
-//                    String command = input.get(indexOfString - 1);
-//                    int needToBeReplaced = Integer.parseInt(command.substring(2));
-//                    int index = 0;
-//
-//                    for(int j = 0; j < top; j++)
-//                        if(array[j][0] == needToBeReplaced)
-//                            index = j;
                     indexOfString--;
                     int index = 0;
                     for(int j = 0; j < top; j++)
