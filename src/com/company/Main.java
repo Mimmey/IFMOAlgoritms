@@ -37,7 +37,7 @@ public class Main {
                 lhs = medium;
         }
 
-        if(lhs < nElements && array[lhs] == number)
+        if(lhs < nElements && lhs >= 0 && array[lhs] == number)
             return lhs + 1;
         return -1;
     }
@@ -69,3 +69,79 @@ public class Main {
         writer.close();
     }
 }
+
+
+//import java.io.*;
+//
+//public class Main {
+//    public static void main(String[] args) throws IOException {
+//
+//        BufferedReader br = new BufferedReader(new FileReader("input.txt"));
+//
+//        int n = Integer.parseInt(br.readLine());
+//        int[] mas = new int[n];
+//        String[] str = br.readLine().split(" ");
+//
+//        for (int i = 0; i < n; i++) {
+//            mas[i] = Integer.parseInt(str[i]);
+//        }
+//
+//        int m = Integer.parseInt(br.readLine());
+//        int[] mas2 = new int[m];
+//        str = br.readLine().split(" ");
+//
+//        for (int i = 0; i < m; i++) {
+//            mas2[i] = Integer.parseInt(str[i]);
+//        }
+//
+//        try(BufferedWriter bw = new BufferedWriter(new FileWriter("output.txt"))){
+//
+//            for (int i = 0; i < m ; i++) {
+//                int l = 0;
+//                int r = n-1;
+//
+//                while (l<r-1){
+//                    int k = (l+r)/2;
+//                    if(mas[k]>=mas2[i])
+//                        r=k;
+//                    else
+//                        l=k;
+//                }
+//
+//                if(mas[l] == mas2[i])
+//                    bw.write((l+1)+" ");
+//                else if(mas[r] == mas2[i])
+//                    bw.write((r+1)+" ");
+//                else
+//                    bw.write(-1+" ");
+//
+//                l = 0;
+//                r = n-1;
+//
+//                while (l<r-1){
+//                    int k = (l+r)/2;
+//                    if(mas[k]<=mas2[i])
+//                        l=k;
+//                    else
+//                        r=k;
+//                }
+//
+//                if(mas[r] == mas2[i])
+//                    bw.write((r+1)+"\n");
+//                else if(mas[l] == mas2[i])
+//                    bw.write((l+1)+"\n");
+//                else
+//                    bw.write(-1+"\n");
+//
+//
+//            }
+//
+//
+//
+//
+//        }
+//
+//    }
+//
+//
+//}
