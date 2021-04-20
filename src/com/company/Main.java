@@ -10,6 +10,7 @@ public class Main {
 
     public static int top;
     public static final int INF = -2147483648;
+    public static int indices[];
 
     public static void minHeapify(int[][] array, int index){
 
@@ -33,6 +34,8 @@ public class Main {
                 array[indMin][1] = array[index][1];
                 array[index][0] = t;
                 array[index][1] = t2;
+                indices[array[index][1]] = index;
+                indices[array[indMin][1]] = indMin;
                 index = indMin;
             }
         }
@@ -42,6 +45,9 @@ public class Main {
         top++;
         array[top - 1][0] = INF;
         array[top - 1][1] = i;
+
+        indices[array[top - 1][1]] = top - 1;
+
         heapDecreaseKey(array, top - 1, a);
     }
 
@@ -52,6 +58,7 @@ public class Main {
             int min = array[0][0];
             array[0][0] = array[top - 1][0];
             array[0][1] = array[top - 1][1];
+            indices[array[0][1]] = 0;
             top--;
             minHeapify(array, 0);
             return min;
@@ -68,6 +75,8 @@ public class Main {
             array[index][1] = array[(index - 1) / 2][1];
             array[(index - 1) / 2][0] = t;
             array[(index - 1) / 2][1] = t2;
+            indices[array[index][1]] = index;
+            indices[array[(index - 1) / 2][1]] = (index - 1) / 2;
             index = (index - 1) / 2;
         }
     }
@@ -80,6 +89,7 @@ public class Main {
         n = scanner.nextInt();
 
         int array[][] = new int[1000000][2];
+        indices = new int[n];
         top = 0;
 
 //        ArrayList<String> input = new ArrayList<String>();
@@ -115,13 +125,13 @@ public class Main {
                     int indexOfString = Integer.parseInt(str.substring(0, str.indexOf(' ')));
                     int number = Integer.parseInt(str.substring(str.indexOf(' ') + 1));
                     indexOfString--;
-                    int index = 0;
-                    for(int j = 0; j < top; j++)
-                        if(array[j][1] == indexOfString) {
-                            index = j;
-                            break;
-                        }
-
+//                    int index = 0;
+//                    for(int j = 0; j < top; j++)
+//                        if(array[j][1] == indexOfString) {
+//                            index = j;
+//                            break;
+//                        }
+                    int index = indices[indexOfString];
                     heapDecreaseKey(array, index, number);
                     break;
                 default:
