@@ -6,142 +6,43 @@ import java.lang.reflect.Array;
 import java.util.*;
 
 
+import java.io.*;
+
 public class Main {
 
-    public static int binarySearchFirstOccurrence(int[] array, int nElements, int number){
-        int lhs = -1;
-        int rhs = nElements;
-
-        while(rhs > lhs + 1){
-            int medium = (rhs + lhs) / 2;
-            if(array[medium] < number)
-                lhs = medium;
-            else
-                rhs = medium;
-        }
-
-        if(rhs < nElements && array[rhs] == number)
-            return rhs + 1;
-        return -1;
-    }
-
-    public static int binarySearchSecondOccurrence(int[] array, int nElements, int number){
-        int lhs = -1;
-        int rhs = nElements;
-
-        while(rhs > lhs + 1){
-            int medium = (rhs + lhs) / 2;
-            if(array[medium] > number)
-                rhs = medium;
-            else
-                lhs = medium;
-        }
-
-        if(lhs < nElements && lhs >= 0 && array[lhs] == number)
-            return lhs + 1;
-        return -1;
-    }
-
     public static void main(String[] args) throws IOException {
+
         Scanner scanner = new Scanner(new File("input.txt"));
-        BufferedWriter writer = new BufferedWriter(new FileWriter("output.txt"));
 
-        int nElements;
-        int nRequests;
+        String[] str =   scanner.nextLine().split(" ");
+        int n = Integer.parseInt(str[0]);
+        double[] h = new double[n];
+        h[0] = Double.parseDouble(str[1]);
 
-        nElements = scanner.nextInt();
+        double next = h[0];
+        double previous = 0;
 
-        int array[] = new int[nElements];
-        for(int i = 0; i < nElements; i++)
-            array[i] = scanner.nextInt();
+        while (next - previous > 0.0000000001){
+            h[1] = (next + previous) / 2;
+            boolean isPreviousZero = false;
 
-        nRequests = scanner.nextInt();
+            for (int i = 2; i < n; i++) {
+                h[i] = 2 * h[i-1] - h[i-2] + 2;
 
-        for(int i = 0; i < nRequests; i++) {
-            int request = scanner.nextInt();
-            int first = binarySearchFirstOccurrence(array, nElements, request);
-            int second = binarySearchSecondOccurrence(array, nElements, request);
+                if(h[i] <= 0) {
+                    isPreviousZero = true;
+                    break;
+                }
+            }
 
-            writer.write(first + " " + second + "\n");
+            if (isPreviousZero)
+                previous = h[1];
+            else
+                next = h[1];
         }
 
-        scanner.close();
-        writer.close();
+        try(BufferedWriter writer = new BufferedWriter(new FileWriter("output.txt"))){
+            writer.write(h [n - 1] + "");
+        }
     }
 }
-
-
-//import java.io.*;
-//
-//public class Main {
-//    public static void main(String[] args) throws IOException {
-//
-//        BufferedReader br = new BufferedReader(new FileReader("input.txt"));
-//
-//        int n = Integer.parseInt(br.readLine());
-//        int[] mas = new int[n];
-//        String[] str = br.readLine().split(" ");
-//
-//        for (int i = 0; i < n; i++) {
-//            mas[i] = Integer.parseInt(str[i]);
-//        }
-//
-//        int m = Integer.parseInt(br.readLine());
-//        int[] mas2 = new int[m];
-//        str = br.readLine().split(" ");
-//
-//        for (int i = 0; i < m; i++) {
-//            mas2[i] = Integer.parseInt(str[i]);
-//        }
-//
-//        try(BufferedWriter bw = new BufferedWriter(new FileWriter("output.txt"))){
-//
-//            for (int i = 0; i < m ; i++) {
-//                int l = 0;
-//                int r = n-1;
-//
-//                while (l<r-1){
-//                    int k = (l+r)/2;
-//                    if(mas[k]>=mas2[i])
-//                        r=k;
-//                    else
-//                        l=k;
-//                }
-//
-//                if(mas[l] == mas2[i])
-//                    bw.write((l+1)+" ");
-//                else if(mas[r] == mas2[i])
-//                    bw.write((r+1)+" ");
-//                else
-//                    bw.write(-1+" ");
-//
-//                l = 0;
-//                r = n-1;
-//
-//                while (l<r-1){
-//                    int k = (l+r)/2;
-//                    if(mas[k]<=mas2[i])
-//                        l=k;
-//                    else
-//                        r=k;
-//                }
-//
-//                if(mas[r] == mas2[i])
-//                    bw.write((r+1)+"\n");
-//                else if(mas[l] == mas2[i])
-//                    bw.write((l+1)+"\n");
-//                else
-//                    bw.write(-1+"\n");
-//
-//
-//            }
-//
-//
-//
-//
-//        }
-//
-//    }
-//
-//
-//}
