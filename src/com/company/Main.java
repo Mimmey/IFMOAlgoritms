@@ -1,48 +1,59 @@
 package com.company;
 
-import javax.annotation.processing.FilerException;
 import java.io.*;
-import java.lang.reflect.Array;
-import java.util.*;
-
-
-import java.io.*;
+import java.util.Scanner;
 
 public class Main {
-
-    public static void main(String[] args) throws IOException {
-
-        Scanner scanner = new Scanner(new File("input.txt"));
-
-        String[] str =   scanner.nextLine().split(" ");
-        int n = Integer.parseInt(str[0]);
-        double[] h = new double[n];
-        h[0] = Double.parseDouble(str[1]);
-
-        double next = h[0];
-        double previous = 0;
-
-        while (next - previous > 0.0000000001){
-            h[1] = (next + previous) / 2;
-            boolean isPreviousZero = false;
-
-            for (int i = 2; i < n; i++) {
-                h[i] = 2 * h[i-1] - h[i-2] + 2;
-
-                if(h[i] <= 0) {
-                    isPreviousZero = true;
-                    break;
-                }
-            }
-
-            if (isPreviousZero)
-                previous = h[1];
-            else
-                next = h[1];
+    public static void checkLength(Element element, int current){
+        if (element.left != 0){
+            checkLength(elements[element.left],current + 1);
         }
 
-        try(BufferedWriter writer = new BufferedWriter(new FileWriter("output.txt"))){
-            writer.write(h [n - 1] + "");
+        if (element.right != 0){
+            checkLength(elements[element.right],current + 1);
+        }
+
+        if (height < current) {
+            height = current;
         }
     }
+
+    static class Element{
+        int key;
+        int left;
+        int right;
+
+        public Element(int key, int left, int right) {
+            this.key = key;
+            this.left = left;
+            this.right = right;
+        }
+    }
+
+    static int height = 0;
+    static Element[] elements;
+
+    public static void main(String[] args) throws IOException {
+        Scanner scanner = new Scanner(new File("input.txt"));
+        int n = scanner.nextInt();
+        elements = new Element[n + 1];
+
+        for (int i = 1; i <= n ; i++) {
+            int input1 = scanner.nextInt();
+            int input2 = scanner.nextInt();
+            int input3 = scanner.nextInt();
+            elements[i] = new Element(input1, input2, input3);
+        }
+
+        if(n != 0) {
+            checkLength(elements[1], 1);
+        }
+
+        try(BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter("output.txt"))){
+            bufferedWriter.write(height + "");
+        }
+
+    }
+
+
 }
