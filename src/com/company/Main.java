@@ -4,82 +4,75 @@ import java.io.*;
 import java.util.Scanner;
 
 public class Main {
-    static class Element {
+    public static class Element{
         int key;
-        int left;
-        int right;
+        int leftChild;
+        int rightChild;
+        int height;
+        int balance;
 
-        public Element(int key, int left, int right) {
-            this.key = key;
-            this.left = left;
-            this.right = right;
+        public Element() {
+            key = 0;
+            leftChild = 0;
+            rightChild = 0;
+            rightChild = 0;
+            height = 0;
+            balance = 0;
         }
     }
 
+    public static Scanner scanner;
     public static Element[] elements;
-    public static int cou = 0;
-    public static int all = 0;
+    public static BufferedWriter writer;
+
+    public static void setHeightAndBalance(int index) {
+        if (elements[index].rightChild == -1 && elements[index].leftChild == -1) {
+            elements[index].height = 0;
+            elements[index].balance = 0;
+        } else if (elements[index].rightChild == -1) {
+            setHeightAndBalance(elements[index].leftChild);
+            int leftChildHeight = elements[elements[index].leftChild].height;
+            elements[index].height = leftChildHeight + 1;
+            elements[index].balance = -1 - leftChildHeight;
+        } else if (elements[index].leftChild == -1) {
+            setHeightAndBalance(elements[index].rightChild);
+            int rightChildHeight = elements[elements[index].rightChild].height;
+            elements[index].height = rightChildHeight + 1;
+            elements[index].balance = rightChildHeight + 1;
+        } else {
+            setHeightAndBalance(elements[index].leftChild);
+            setHeightAndBalance(elements[index].rightChild);
+            int leftChildHeight = elements[elements[index].leftChild].height;
+            int rightChildHeight = elements[elements[index].rightChild].height;
+            elements[index].height = Math.max(leftChildHeight, rightChildHeight) + 1;
+            elements[index].balance = rightChildHeight - leftChildHeight;
+        }
+    }
 
     public static void main(String[] args) throws IOException {
-        Scanner scanner = new Scanner(new File("input.txt"));
+        scanner = new Scanner(new File("input.txt"));
+        writer = new BufferedWriter(new FileWriter("output.txt"));
         int n = scanner.nextInt();
 
-        all = n;
-        elements = new Element[n + 1];
+        elements = new Element[n];
 
-        for (int i = 1; i <= n; i++) {
-            int input1 = scanner.nextInt();
-            int input2 = scanner.nextInt();
-            int input3 = scanner.nextInt();
-
-            elements[i] = new Element(input1, input2, input3);
+        for (int i = 0; i < n; i++) {
+            elements[i] = new Element();
         }
 
-        int m = scanner.nextInt();
-        int[] keys = new int[m];
-
-        for (int i = 0; i < m ; i++) {
-            keys[i] = scanner.nextInt();
+        for (int i = 0; i < n; i++) {
+            elements[i].key = scanner.nextInt();
+            elements[i].leftChild = scanner.nextInt() - 1;
+            elements[i].rightChild = scanner.nextInt() - 1;
         }
 
-        try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter("output.txt"))) {
-            for (int i = 0; i < m ; i++) {
-                whereItIs(1, keys[i]);
-                bufferedWriter.write(all + "\n");
-            }
+        setHeightAndBalance(0);
+
+        for (Element i : elements) {
+            writer.write(i.balance + "\n");
         }
+
+        scanner.close();
+        writer.close();
     }
-
-    public static void amount(Element element) {
-        if(element == null)
-            return;
-        cou++;
-
-        amount(elements[element.left]);
-        amount(elements[element.right]);
-    }
-
-    public static void whereItIs(int index, int key) {
-        if (elements[index] == null) {
-            return;
-        }
-
-        if (elements[index].key == key) {
-            amount(elements[index]);
-            elements[index] = null;
-            all -= cou;
-            cou = 0;
-            return;
-        }
-
-        if(key < elements[index].key) {
-            whereItIs(elements[index].left, key);
-        }
-
-        if(key > elements[index].key) {
-            whereItIs(elements[index].right, key);
-        }
-
-    }
-
 }
