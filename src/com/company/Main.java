@@ -29,6 +29,7 @@ public class Main {
     public static BufferedWriter writer;
     public static int root;
     public static int n;
+    public static int tailSortedElements = 1;
 
     public static void bigLeftRotate(int index) {
         int rightChild = elements[index].rightChild;
@@ -41,40 +42,29 @@ public class Main {
         elements[index].rightChild = leftChildOfLeftChildOfRightChild;
         elements[rightChild].leftChild = rightChildOfLeftChildOfRightChild;
         root = leftChildOfRightChild;
+
+        if (elements[leftChildOfRightChild].balance == -1) {
+            elements[index].balance = 0;
+            elements[rightChild].balance = 1;
+            elements[leftChildOfRightChild].balance = 0;
+        } else if (elements[leftChildOfRightChild].balance == 0) {
+            elements[index].balance = 0;
+            elements[rightChild].balance = 0;
+            elements[leftChildOfRightChild].balance = 0;
+        } else if (elements[leftChildOfRightChild].balance == 1) {
+            elements[index].balance = -1;
+            elements[rightChild].balance = 0;
+            elements[leftChildOfRightChild].balance = 0;
+        }
     }
 
     public static void printElements(int index) throws IOException {
-//        if (index < n + 1) {
-//            writer.write(sortedElements[index].key + " ");
-//            if (sortedElements[index].leftChild == -1) {
-//                writer.write(0 + "");
-//            } else {
-//                writer.write((2 * index) + "");
-//            }
-//
-//            writer.write(" ");
-//
-//            if (sortedElements[index].rightChild == -1) {
-//                writer.write(0 + " ");
-//            } else {
-//                writer.write((2 * index + 1) + "");
-//            }
-//
-//            writer.write("\n");
-//        }
-//        if (2 * index < n + 1) {
-//            printElements(2 * index);
-//        }
-//        if (2 * index + 1 < n + 1) {
-//            printElements(2 * index + 1);
-//        }
-
         while (index < n + 1) {
             writer.write(sortedElements[index].key + " ");
             if (sortedElements[index].leftChild == -1) {
                 writer.write(0 + "");
             } else {
-                writer.write((2 * index) + "");
+                writer.write(elements[sortedElements[index].leftChild].indexInOutput + "");
             }
 
             writer.write(" ");
@@ -82,7 +72,7 @@ public class Main {
             if (sortedElements[index].rightChild == -1) {
                 writer.write(0 + " ");
             } else {
-                writer.write((2 * index + 1) + "");
+                writer.write(elements[sortedElements[index].rightChild].indexInOutput + "");
             }
 
             writer.write("\n");
@@ -96,6 +86,14 @@ public class Main {
         elements[index].rightChild = elements[rightChild].leftChild;
         elements[rightChild].leftChild = index;
         root = rightChild;
+
+        if (elements[rightChild].balance == 1) {
+            elements[index].balance = 0;
+            elements[rightChild].balance = 0;
+        } else if (elements[rightChild].balance == 0) {
+            elements[index].balance = 1;
+            elements[rightChild].balance = -1;
+        }
     }
 
     public static void setHeightAndBalance(int index) {
@@ -123,29 +121,32 @@ public class Main {
     }
 
     public static void setIndicesOfOutput(int index) {
-//        if (index == root) {
-//            elements[index].indexInOutput = 1;
-//        }
-//
-//        if (elements[index].leftChild != -1) {
-//           elements[elements[index].leftChild].indexInOutput = elements[index].indexInOutput * 2;
-//           setIndicesOfOutput(elements[index].leftChild);
-//        }
-//
-//        if (elements[index].rightChild != -1) {
-//            elements[elements[index].rightChild].indexInOutput = elements[index].indexInOutput * 2 + 1;
-//            setIndicesOfOutput(elements[index].rightChild);
-//        }
-//
-//        sortedElements[elements[index].indexInOutput] = elements[index];
-        for (int i = index; i < n + 1; i++) {
+        if (index < n + 1) {
             if (index == root) {
-                elements[i].indexInOutput = 1;
-                sortedElements[1] = elements[i];
+                elements[index].indexInOutput = 1;
+                sortedElements[tailSortedElements] = elements[index];
+                elements[index].indexInOutput = tailSortedElements;
+                tailSortedElements++;
             }
 
-            if(elements[i].leftChild != -1) {
+            if (elements[index].leftChild != -1) {
+                sortedElements[tailSortedElements] = elements[elements[index].leftChild];
+                elements[elements[index].leftChild].indexInOutput = tailSortedElements;
+                tailSortedElements++;
+            }
 
+            if (elements[index].rightChild != -1) {
+                sortedElements[tailSortedElements] = elements[elements[index].rightChild];
+                elements[elements[index].rightChild].indexInOutput = tailSortedElements;
+                tailSortedElements++;
+            }
+
+            if (elements[index].leftChild != -1) {
+                setIndicesOfOutput(elements[index].leftChild);
+            }
+
+            if (elements[index].rightChild != -1) {
+                setIndicesOfOutput(elements[index].rightChild);
             }
         }
     }
@@ -171,9 +172,9 @@ public class Main {
 
         setHeightAndBalance(0);
 
-        if (elements[0].balance == 2 && elements[elements[0].rightChild].balance == -1) {
+        if (elements[0].balance > 1 && elements[elements[0].rightChild].balance == -1) {
             bigLeftRotate(0);
-        } else if (elements[0].balance == 2) {
+        } else if (elements[0].balance > 1) {
             smallLeftRotate(0);
         }
 
