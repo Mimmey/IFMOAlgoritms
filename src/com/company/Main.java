@@ -363,7 +363,6 @@ public class Main {
         elements = new Element[N];
         sortedElements = new Element[N];
 
-//        initElements();
         scanElements();
 
         if (tailElements != 0) {
