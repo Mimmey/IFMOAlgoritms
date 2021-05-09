@@ -87,7 +87,7 @@ public class Main {
         }
 
         setParents(root);
-        setHeightAndBalance(root);
+//        setHeightAndBalance(root);
 
         if (elements[leftChildOfRightChild].balance == -1) {
             elements[index].balance = 0;
@@ -122,7 +122,7 @@ public class Main {
         }
 
         setParents(root);
-        setHeightAndBalance(root);
+//        setHeightAndBalance(root);
 
         if (elements[rightChildOfLeftChild].balance == -1) {
             elements[index].balance = 1;
@@ -245,8 +245,8 @@ public class Main {
 
     public static void removeElement(int key) {
         int index = findIndex(key, root);
-        Parent starter = elements[index].parent;
         if (index != -1) {
+            Parent starter = elements[index].parent;
             if (elements[index].leftChild == -1 && elements[index].rightChild == -1) {
                 if (index != root) {
                     if (elements[index].parent.isRightChild) {
@@ -359,7 +359,7 @@ public class Main {
         }
 
         setParents(root);
-        setHeightAndBalance(root);
+//        setHeightAndBalance(root);
 
         if (elements[rightChild].balance == 1) {
             elements[index].balance = 0;
@@ -383,7 +383,7 @@ public class Main {
         }
 
         setParents(root);
-        setHeightAndBalance(root);
+//        setHeightAndBalance(root);
 
         if (elements[leftChild].balance == -1) {
             elements[index].balance = 0;
@@ -469,26 +469,42 @@ public class Main {
         writer = new BufferedWriter(new FileWriter("output.txt"));
         root = 0;
 
-        tailElements = scanner.nextInt();
+//        tailElements = scanner.nextInt();
         elements = new Element[N];
         sortedElements = new Element[N];
 
-        scanElements();
+//        scanElements();
+//
+//        if (tailElements != 0) {
+//            setParents(root);
+//            setHeightAndBalance(root);
+//        }
 
-        if (tailElements != 0) {
-            setParents(root);
-            setHeightAndBalance(root);
+        int n = scanner.nextInt();
+        scanner.nextLine();
+        for (int i = 0; i < n; i++) {
+            String input = scanner.nextLine();
+            char operation = input.charAt(0);
+            int argument = Integer.parseInt(input.substring(2));
+
+            switch (operation) {
+                case 'A':
+                    insertElement(argument);
+                    writer.write(elements[root].balance + "\n");
+                    break;
+                case 'D':
+                    removeElement(argument);
+                    writer.write(elements[root].balance + "\n");
+                    break;
+                case 'C':
+                    writer.write((findIndex(argument, root) == -1 ? 'N' : 'Y') + "\n");
+            }
         }
-
-        removeElement(scanner.nextInt());
-//        insertElement(scanner.nextInt());
-
-
-        writer.write(tailElements + "\n");
-        if (tailElements > 0) {
-            setIndicesOfOutput(root);
-            printElements(1);
-        }
+//        writer.write(tailElements + "\n");
+//        if (tailElements > 0) {
+//            setIndicesOfOutput(root);
+//            printElements(1);
+//        }
 
         scanner.close();
         writer.close();
