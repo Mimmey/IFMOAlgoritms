@@ -84,11 +84,6 @@ public class Main {
             root = leftChildOfRightChild;
         } else {
             changeChildrenOfParent(elements[index].parent, leftChildOfRightChild);
-//            if (elements[index].parent.isRightChild) {
-//                changeChildrenOfParent(new Parent(elements[index].parent, true), leftChildOfRightChild);
-//            } else {
-//                changeChildrenOfParent(new Parent(elements[index].parent, false), leftChildOfRightChild);
-//            }
         }
 
         setParents(root);
@@ -124,11 +119,6 @@ public class Main {
             root = rightChildOfLeftChild;
         } else {
             changeChildrenOfParent(elements[index].parent, rightChildOfLeftChild);
-//            if (elements[elements[index].parent].rightChild == index) {
-//                changeChildrenOfParent(new Parent(elements[index].parent, true), rightChildOfLeftChild);
-//            } else {
-//                changeChildrenOfParent(new Parent(elements[index].parent, false), rightChildOfLeftChild);
-//            }
         }
 
         setParents(root);
@@ -255,7 +245,7 @@ public class Main {
 
     public static void removeElement(int key) {
         int index = findIndex(key, root);
-        int starterBalance = elements[index].parent.index;
+        Parent starter = elements[index].parent;
         if (index != -1) {
             if (elements[index].leftChild == -1 && elements[index].rightChild == -1) {
                 if (index != root) {
@@ -266,21 +256,29 @@ public class Main {
                     }
                     shiftFromIndex(index);
                     setHeightAndBalance(root);
-                    if (starterBalance != -1) {
-                        balanceTree(starterBalance);
+                    if (starter.index != -1 && elements[starter.index].rightChild != -1 && starter.isRightChild) {
+                        balanceTree(elements[starter.index].rightChild);
+                    } else if (starter.index != -1 && elements[starter.index].leftChild != -1 && starter.isRightChild) {
+                        balanceTree(elements[starter.index].leftChild);
+                    } else if (starter.index != -1) {
+                        balanceTree(index);
+                    } else {
+                        balanceTree(root);
                     }
+                    balanceTree(starter.index);
                 } else {
                     tailElements--;
                     root = -1;
                 }
             } else if (elements[index].leftChild != -1 && elements[index].rightChild != -1) {
                 int remover = findRighterFromLeftSubtree(index);
+                starter = elements[remover].parent;
                 elements[index].key = elements[remover].key;
 
-                if (elements[remover].leftChild != -1) {
-                    elements[index].leftChild = elements[remover].leftChild;
-                } else if(elements[remover].rightChild != -1) {
-                    elements[index].rightChild = elements[remover].rightChild;
+                if (elements[remover].leftChild != -1 && elements[remover].parent.isRightChild) {
+                    elements[elements[remover].parent.index].rightChild = elements[remover].leftChild;
+                } else if (elements[remover].leftChild != -1 && !(elements[remover].parent.isRightChild)) {
+                    elements[elements[remover].parent.index].leftChild = elements[remover].leftChild;
                 } else {
                     if (elements[remover].parent.isRightChild) {
                         elements[elements[remover].parent.index].rightChild = -1;
@@ -291,9 +289,16 @@ public class Main {
 
                 shiftFromIndex(remover);
                 setHeightAndBalance(root);
-                if (starterBalance != -1) {
-                    balanceTree(starterBalance);
+                if (starter.index != -1 && elements[starter.index].rightChild != -1 && starter.isRightChild) {
+                    balanceTree(elements[starter.index].rightChild);
+                } else if (starter.index != -1 && elements[starter.index].leftChild != -1 && starter.isRightChild) {
+                    balanceTree(elements[starter.index].leftChild);
+                } else if (starter.index != -1) {
+                    balanceTree(index);
+                } else {
+                    balanceTree(root);
                 }
+                balanceTree(starter.index);
             } else {
                 int remover;
                 if (elements[index].leftChild != -1) {
@@ -306,9 +311,16 @@ public class Main {
                 elements[index].key = elements[remover].key;
                 shiftFromIndex(remover);
                 setHeightAndBalance(root);
-                if (starterBalance != -1) {
-                    balanceTree(starterBalance);
+                if (starter.index != -1 && elements[starter.index].rightChild != -1 && starter.isRightChild) {
+                    balanceTree(elements[starter.index].rightChild);
+                } else if (starter.index != -1 && elements[starter.index].leftChild != -1 && starter.isRightChild) {
+                    balanceTree(elements[starter.index].leftChild);
+                } else if (starter.index != -1) {
+                    balanceTree(index);
+                } else {
+                    balanceTree(root);
                 }
+                balanceTree(starter.index);
             }
         }
     }
@@ -321,7 +333,7 @@ public class Main {
 
     public static void shiftFromIndex(int index) {
         elements[index] = elements[tailElements - 1];
-        if ((tailElements - 1 != index) && !(index != elements[tailElements - 1].leftChild) && !(index != elements[tailElements - 1].rightChild)) {
+        if ((tailElements - 1 != index) && index == elements[tailElements - 1].leftChild && index == elements[tailElements - 1].rightChild) {
             if (elements[tailElements - 1].parent.index != -1) {
                 if (elements[tailElements - 1].parent.isRightChild) {
                     elements[elements[tailElements - 1].parent.index].rightChild = index;
@@ -329,23 +341,7 @@ public class Main {
                     elements[elements[tailElements - 1].parent.index].leftChild = index;
                 }
             }
-//        } else {
-//            if (elements[tailElements - 1].parent.index != -1) {
-//                if (elements[tailElements - 1].parent.isRightChild) {
-//                    elements[elements[tailElements - 1].parent.index].rightChild = -1;
-//                } else {
-//                    elements[elements[tailElements - 1].parent.index].leftChild = -1;
-//                }
-//            }
         }
-
-//        for (int i = 0; i < tailElements; i++) {
-//            if (elements[i].rightChild == tailElements - 1) {
-//                elements[i].rightChild = index;
-//            } else if (elements[i].leftChild == tailElements - 1) {
-//                elements[i].leftChild = index;
-//            }
-//        }
         tailElements--;
         setParents(root);
     }
@@ -360,11 +356,6 @@ public class Main {
             root = rightChild;
         } else {
             changeChildrenOfParent(elements[index].parent, rightChild);
-//            if (elements[elements[index].parent].rightChild == index) {
-//                changeChildrenOfParent(new Parent(elements[index].parent, true), rightChild);
-//            } else {
-//                changeChildrenOfParent(new Parent(elements[index].parent, false), rightChild);
-//            }
         }
 
         setParents(root);
@@ -389,12 +380,6 @@ public class Main {
             root = leftChild;
         } else {
             changeChildrenOfParent(elements[index].parent, leftChild);
-
-//            if (elements[elements[index].parent].rightChild == index) {
-//                changeChildrenOfParent(new Parent(elements[index].parent, true), leftChild);
-//            } else {
-//                changeChildrenOfParent(new Parent(elements[index].parent, false), leftChild);
-//            }
         }
 
         setParents(root);
