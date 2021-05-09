@@ -6,14 +6,14 @@ import java.util.Scanner;
 public class Main {
     public static class Element {
         int key;
-        int parent;
+        Parent parent;
         int leftChild;
         int rightChild;
         int height;
         int balance;
         int indexInOutput;
 
-        public Element(int key, int parent) {
+        public Element(int key, Parent parent) {
             this.key = key;
             this.parent = parent;
             leftChild = -1;
@@ -25,7 +25,7 @@ public class Main {
 
         public Element(int key, int leftChild, int rightChild) {
             this.key = key;
-            parent = -1;
+            parent = new Parent(-1, false);
             this.leftChild = leftChild;
             this.rightChild = rightChild;
             height = 0;
@@ -66,7 +66,7 @@ public class Main {
             }
 
             setParents(root);
-            balanceTree(elements[index].parent);
+            balanceTree(elements[index].parent.index);
         }
     }
 
@@ -83,11 +83,12 @@ public class Main {
         if (index == root) {
             root = leftChildOfRightChild;
         } else {
-            if (elements[elements[index].parent].rightChild == index) {
-                changeChildrenOfParent(new Parent(elements[index].parent, true), leftChildOfRightChild);
-            } else {
-                changeChildrenOfParent(new Parent(elements[index].parent, false), leftChildOfRightChild);
-            }
+            changeChildrenOfParent(elements[index].parent, leftChildOfRightChild);
+//            if (elements[index].parent.isRightChild) {
+//                changeChildrenOfParent(new Parent(elements[index].parent, true), leftChildOfRightChild);
+//            } else {
+//                changeChildrenOfParent(new Parent(elements[index].parent, false), leftChildOfRightChild);
+//            }
         }
 
         setParents(root);
@@ -122,11 +123,12 @@ public class Main {
         if (index == root) {
             root = rightChildOfLeftChild;
         } else {
-            if (elements[elements[index].parent].rightChild == index) {
-                changeChildrenOfParent(new Parent(elements[index].parent, true), rightChildOfLeftChild);
-            } else {
-                changeChildrenOfParent(new Parent(elements[index].parent, false), rightChildOfLeftChild);
-            }
+            changeChildrenOfParent(elements[index].parent, rightChildOfLeftChild);
+//            if (elements[elements[index].parent].rightChild == index) {
+//                changeChildrenOfParent(new Parent(elements[index].parent, true), rightChildOfLeftChild);
+//            } else {
+//                changeChildrenOfParent(new Parent(elements[index].parent, false), rightChildOfLeftChild);
+//            }
         }
 
         setParents(root);
@@ -155,6 +157,27 @@ public class Main {
         }
     }
 
+    public static int findIndex(int key, int location) {
+        Element locationElement = elements[location];
+        if (tailElements == 0) {
+            return -1;
+        }
+
+        if (locationElement.key == key) {
+            return location;
+        }
+
+        if (locationElement.key < key && locationElement.rightChild != -1) {
+            return findIndex(key, locationElement.rightChild);
+        }
+
+        if (locationElement.leftChild != -1) {
+            return findIndex(key, locationElement.leftChild);
+        }
+
+        return -1;
+    }
+
     public static Parent findParent(int key, int location) {
         Element locationElement = elements[location];
 
@@ -179,11 +202,19 @@ public class Main {
         }
     }
 
+    public static int findRighterFromLeftSubtree(int index) {
+        index = elements[index].leftChild;
+        while (elements[index].rightChild != -1) {
+            index = elements[index].rightChild;
+        }
+        return index;
+    }
+
     public static void insertElement(int key) {
         Parent parent = findParent(key, root);
 
         if (parent != null) {
-            elements[tailElements] = new Element(key, parent.index);
+            elements[tailElements] = new Element(key, parent);
             tailElements++;
 
             if (parent.index != -1) {
@@ -222,10 +253,101 @@ public class Main {
         }
     }
 
+    public static void removeElement(int key) {
+        int index = findIndex(key, root);
+        int starterBalance = elements[index].parent.index;
+        if (index != -1) {
+            if (elements[index].leftChild == -1 && elements[index].rightChild == -1) {
+                if (index != root) {
+                    if (elements[index].parent.isRightChild) {
+                        elements[elements[index].parent.index].rightChild = -1;
+                    } else {
+                        elements[elements[index].parent.index].leftChild = -1;
+                    }
+                    shiftFromIndex(index);
+                    setHeightAndBalance(root);
+                    if (starterBalance != -1) {
+                        balanceTree(starterBalance);
+                    }
+                } else {
+                    tailElements--;
+                    root = -1;
+                }
+            } else if (elements[index].leftChild != -1 && elements[index].rightChild != -1) {
+                int remover = findRighterFromLeftSubtree(index);
+                elements[index].key = elements[remover].key;
+
+                if (elements[remover].leftChild != -1) {
+                    elements[index].leftChild = elements[remover].leftChild;
+                } else if(elements[remover].rightChild != -1) {
+                    elements[index].rightChild = elements[remover].rightChild;
+                } else {
+                    if (elements[remover].parent.isRightChild) {
+                        elements[elements[remover].parent.index].rightChild = -1;
+                    } else {
+                        elements[elements[remover].parent.index].leftChild = -1;
+                    }
+                }
+
+                shiftFromIndex(remover);
+                setHeightAndBalance(root);
+                if (starterBalance != -1) {
+                    balanceTree(starterBalance);
+                }
+            } else {
+                int remover;
+                if (elements[index].leftChild != -1) {
+                    remover = elements[index].leftChild;
+                    elements[index].leftChild = -1;
+                } else {
+                    remover = elements[index].rightChild;
+                    elements[index].rightChild = -1;
+                }
+                elements[index].key = elements[remover].key;
+                shiftFromIndex(remover);
+                setHeightAndBalance(root);
+                if (starterBalance != -1) {
+                    balanceTree(starterBalance);
+                }
+            }
+        }
+    }
+
     public static void scanElements() {
         for (int i = 0; i < tailElements; i++) {
             elements[i] = new Element(scanner.nextInt(), scanner.nextInt() - 1, scanner.nextInt() - 1);
         }
+    }
+
+    public static void shiftFromIndex(int index) {
+        elements[index] = elements[tailElements - 1];
+        if ((tailElements - 1 != index) && !(index != elements[tailElements - 1].leftChild) && !(index != elements[tailElements - 1].rightChild)) {
+            if (elements[tailElements - 1].parent.index != -1) {
+                if (elements[tailElements - 1].parent.isRightChild) {
+                    elements[elements[tailElements - 1].parent.index].rightChild = index;
+                } else {
+                    elements[elements[tailElements - 1].parent.index].leftChild = index;
+                }
+            }
+//        } else {
+//            if (elements[tailElements - 1].parent.index != -1) {
+//                if (elements[tailElements - 1].parent.isRightChild) {
+//                    elements[elements[tailElements - 1].parent.index].rightChild = -1;
+//                } else {
+//                    elements[elements[tailElements - 1].parent.index].leftChild = -1;
+//                }
+//            }
+        }
+
+//        for (int i = 0; i < tailElements; i++) {
+//            if (elements[i].rightChild == tailElements - 1) {
+//                elements[i].rightChild = index;
+//            } else if (elements[i].leftChild == tailElements - 1) {
+//                elements[i].leftChild = index;
+//            }
+//        }
+        tailElements--;
+        setParents(root);
     }
 
     public static void smallLeftRotate(int index) {
@@ -237,11 +359,12 @@ public class Main {
         if (index == root) {
             root = rightChild;
         } else {
-            if (elements[elements[index].parent].rightChild == index) {
-                changeChildrenOfParent(new Parent(elements[index].parent, true), rightChild);
-            } else {
-                changeChildrenOfParent(new Parent(elements[index].parent, false), rightChild);
-            }
+            changeChildrenOfParent(elements[index].parent, rightChild);
+//            if (elements[elements[index].parent].rightChild == index) {
+//                changeChildrenOfParent(new Parent(elements[index].parent, true), rightChild);
+//            } else {
+//                changeChildrenOfParent(new Parent(elements[index].parent, false), rightChild);
+//            }
         }
 
         setParents(root);
@@ -265,11 +388,13 @@ public class Main {
         if (index == root) {
             root = leftChild;
         } else {
-            if (elements[elements[index].parent].rightChild == index) {
-                changeChildrenOfParent(new Parent(elements[index].parent, true), leftChild);
-            } else {
-                changeChildrenOfParent(new Parent(elements[index].parent, false), leftChild);
-            }
+            changeChildrenOfParent(elements[index].parent, leftChild);
+
+//            if (elements[elements[index].parent].rightChild == index) {
+//                changeChildrenOfParent(new Parent(elements[index].parent, true), leftChild);
+//            } else {
+//                changeChildrenOfParent(new Parent(elements[index].parent, false), leftChild);
+//            }
         }
 
         setParents(root);
@@ -310,15 +435,15 @@ public class Main {
 
     public static void setParents(int index) {
         if (index == root) {
-            elements[index].parent = -1;
+            elements[index].parent = new Parent(-1, false);
         }
 
         if (elements[index].rightChild != -1) {
-            elements[elements[index].rightChild].parent = index;
+            elements[elements[index].rightChild].parent = new Parent(index, true);
             setParents(elements[index].rightChild);
         }
         if (elements[index].leftChild != -1) {
-            elements[elements[index].leftChild].parent = index;
+            elements[elements[index].leftChild].parent = new Parent(index, false);
             setParents(elements[index].leftChild);
         }
     }
@@ -370,11 +495,15 @@ public class Main {
             setHeightAndBalance(root);
         }
 
-        insertElement(scanner.nextInt());
+        removeElement(scanner.nextInt());
+//        insertElement(scanner.nextInt());
 
-        setIndicesOfOutput(root);
+
         writer.write(tailElements + "\n");
-        printElements(1);
+        if (tailElements > 0) {
+            setIndicesOfOutput(root);
+            printElements(1);
+        }
 
         scanner.close();
         writer.close();
