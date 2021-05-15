@@ -1,162 +1,146 @@
 package com.company;
 
-import java.io.*;
-import java.util.Scanner;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.util.HashMap;
 
 public class Main {
-    enum Side {
-        RIGHT, LEFT;
-    };
+    public static void main(String[] args) throws Exception {
 
-    public static class Element {
-        int key;
-        Element[] children;
-        int height;
+        String [] request = new String[100000];
+        char[] q = new char[100000];
+        int head = 0;
+        int tail = 0;
+        char[] reg = new char[200];
 
-        public Element(int key, Element left, Element right) {
-            children = new Element[2];
-            children[0] = left;
-            children[1] = right;
-            this.key = key;
-            this.height = 1;
-        }
-    }
+        HashMap<String,Integer> map = new HashMap<>();
+        BufferedReader bufferedReader = new BufferedReader(new FileReader("input.txt"));
 
-    public static class Tree {
-        Element root = null;
+        int length = 0;
 
-        public int getBalance(Element element) {
-            if (element == null) {
-                return 0;
+        while (bufferedReader.ready()) {
+            request[length] = bufferedReader.readLine();
+
+            if(request[length].charAt(0) == ':'){
+                map.put(request[length].substring(1),length);
             }
 
-            return (element.children[1] != null ? element.children[1].height : 0) -
-                    (element.children[0] != null ? element.children[0].height : 0);
+            length++;
         }
 
-        public void setHeight(Element element) {
-            element.height = Math.max(getLeftHeight(element), getRightHeight(element)) + 1;
-        }
+        bufferedReader.close();
 
-        public int getRightHeight(Element element) {
-            return (element.children[1] == null ? 0 : element.children[1].height);
-        }
+        int[] indices = new int[100000];
 
-        public int getLeftHeight(Element element) {
-            return (element.children[0] == null ? 0 : element.children[0].height);
-        }
-
-        public Element rotate(Element element, Side side) {
-            Element rotated = element.children[side == Side.LEFT ? 1 : 0];
-            element.children[side == Side.LEFT ? 1 : 0] = rotated.children[side == Side.LEFT ? 0 : 1];
-            rotated.children[side == Side.LEFT ? 0 : 1] = element;
-            setHeight(element);
-            setHeight(rotated);
-            return rotated;
-        }
-
-        public Element setBalance(Element element) {
-            setHeight(element);
-            if (getBalance(element) > 1) {
-                if (getBalance(element.children[1]) < 0) {
-                    element.children[1] = rotate(element.children[1], Side.RIGHT);
-                }
-                return rotate(element, Side.LEFT);
-            }
-
-            if (getBalance(element) < -1) {
-                if (getBalance(element.children[0]) > 0) {
-                    element.children[0] = rotate(element.children[0], Side.LEFT);
-                }
-                return rotate(element, Side.RIGHT);
-            }
-
-            return element;
-        }
-
-        Element insert(Element root, int key) {
-            if (root == null) {
-                return new Element(key, null, null);
-            }
-            root.children[key < root.key ? 0 : 1] = insert(root.children[key < root.key ? 0 : 1], key);
-            return setBalance(root);
-        }
-
-        Element findMax(Element root) {
-            return root.children[1] == null ? root : findMax(root.children[1]);
-        }
-
-        Element remove(Element root, int key) {
-            if (root == null) {
-                return null;
-            }
-
-            if (key != root.key) {
-                root.children[key < root.key ? 0 : 1] = remove(root.children[key < root.key ? 0 : 1], key);
-            } else {
-                if (root.children[0] == null && root.children[1] == null) {
-                    return null;
-                }
-
-                if (root.children[0] == null) {
-                    root = root.children[1];
-                    return setBalance(root);
-                }
-
-                Element righter = findMax(root.children[0]);
-                root.key = righter.key;
-                root.children[0] = remove(root.children[0], righter.key);
-            }
-            return setBalance(root);
-        }
-
-        Element search(Element root, int key) {
-            if (root == null || key == root.key) {
-                return root;
-            }
-            return search(root.children[key < root.key ? 0 : 1], key);
-        }
-    }
-
-    public static Scanner scanner;
-    public static BufferedWriter writer;
-    public static int N = 200002;
-
-
-    public static void main(String[] args) throws IOException {
-        scanner = new Scanner(new File("input.txt"));
-        writer = new BufferedWriter(new FileWriter("output.txt"));
-
-        int n = scanner.nextInt();
-        scanner.nextLine();
-        Tree tree = new Tree();
-
-        for (int i = 0; i < n; i++) {
-            String input = scanner.nextLine();
-            char operation = input.charAt(0);
-            int argument = Integer.parseInt(input.substring(2));
-
-            switch (operation) {
-                case 'A':
-                    if (tree.search(tree.root, argument) == null) {
-                        tree.root = tree.insert(tree.root, argument);
-                    }
-                    writer.write(tree.getBalance(tree.root) + "\n");
+        for (int i = 0; i < length; i++) {
+            switch (request[i].charAt(0)) {
+                case 'J':
+                    indices[i] = map.get(request[i].substring(1));
+                    continue;
+                case 'Z':
+                    indices[i] = map.get(request[i].substring(2));
                     break;
-                case 'D':
-                    if (tree.search(tree.root, argument) != null) {
-                        tree.root = tree.remove(tree.root, argument);
+                case 'E':
+                case 'G':
+                    indices[i] = map.get(request[i].substring(3));
+                    break;
+            }
+        }
+
+        BufferedWriter writer = new BufferedWriter(new FileWriter("output.txt"));
+
+        int cou = 0;
+        while (cou < length){
+            char s = request[cou].charAt(0);
+
+            if (s >= '0' && s <= '9'){
+                q[tail] = (char) Integer.parseInt(request[cou]);
+                tail++;
+                cou++;
+                continue;
+            }
+
+            switch (s){
+                case '+':
+                    q[tail] = q[head] += q[head + 1];
+                    head += 2;
+                    tail++;
+                    break;
+                case '-':
+                    q[tail] = q[head] -= q[head + 1];
+                    head += 2;
+                    tail++;
+                    break;
+                case '*':
+                    q[tail] = q[head] *= q[head + 1];
+                    head += 2;
+                    tail++;
+                    break;
+                case '/':
+                    q[tail] = (q[head + 1] == 0) ? 0 : (q[head] /= q[head + 1]);
+                    head += 2;
+                    tail++;
+                    break;
+                case '%':
+                    q[tail] = (q[head + 1] == 0) ? 0 : (q[head] %= q[head + 1]);
+                    head += 2;
+                    tail++;
+                    break;
+                case '>':
+                    reg[request[cou].charAt(1)] = q[head];
+                    head++;
+                    break;
+                case '<':
+                    q[tail] = reg[request[cou].charAt(1)];
+                    tail++;
+                    break;
+                case 'P':
+                    if (request[cou].length() == 1) {
+                        writer.write((int)q[head] + "\n");
+                        head++;
                     }
-                    writer.write(tree.getBalance(tree.root) + "\n");
+                    else {
+                        writer.write((int)reg[request[cou].charAt(1)] + "\n");
+                    }
                     break;
                 case 'C':
-                    writer.write((tree.search(tree.root, argument) != null) ? "Y\n" : "N\n");
+                    if (request[cou].length() == 1) {
+                        writer.write((char)(q[head] % 256) );
+                        head++;
+                    }
+                    else {
+                        writer.write((char)(reg[request[cou].charAt(1)] % 256));
+                    }
                     break;
+                case 'J':
+                    cou = indices[cou];
+                    continue;
+                case 'Z':
+                    if (reg[request[cou].charAt(1)] == 0){
+                        cou = indices[cou];
+                        continue;
+                    }
+                    break;
+                case 'E':
+                    if (reg[request[cou].charAt(1)] == reg[request[cou].charAt(2)]) {
+                        cou = indices[cou];
+                        continue;
+                    }
+                    break;
+                case 'G':
+                    if (reg[request[cou].charAt(1)] > reg[request[cou].charAt(2)]) {
+                        cou = indices[cou];
+                        continue;
+                    }
+                    break;
+                case 'Q':
+                    cou = length;
+                    continue;
             }
-
+            cou++;
         }
-
-        scanner.close();
         writer.close();
     }
 }
