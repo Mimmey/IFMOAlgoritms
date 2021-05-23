@@ -44,13 +44,14 @@ public class Main {
     static class NodeList {
         private Node[] list;
         private int head;
+        private Integer laster;
         private int size;
-        private int current;
 
         public NodeList() {
             list = new Node[500000];
             head = 0;
             size = 0;
+            laster = null;
         }
 
         public int getHead() {
@@ -61,15 +62,28 @@ public class Main {
             list[key].setValue(value);
         }
 
-        public void add(String value) {
-            Integer prev = null;
-            if (head > 0) {
-                prev = head - 1;
-                list[head - 1].setNext(head);
+        public int add(String value) {
+            Integer place = null;
+            for (int i = 0; i < head; i++) {
+                if (list[i] == null) {
+                    place = i;
+                }
             }
-            list[head] = new Node(value, prev, null);
-            head++;
+
+            if(place == null) {
+                place = head;
+                head++;
+            }
+
+            if (laster != null) {
+                list[laster].setNext(place);
+            }
+
+            list[place] = new Node(value, laster, null);
+            laster = place;
+
             size++;
+            return place;
         }
 
         public void remove(int index) {
@@ -85,17 +99,28 @@ public class Main {
                 }
             }
 
-            list[index] = null;
-            size--;
-
-            int rightHead = -1;
-            for (int i = 0; i < head; i++) {
-                if (list[i] != null) {
-                    rightHead = i;
+            if (index == laster) {
+                laster = list[index].getPrev();
+                if (laster != null) {
+                    list[laster].setNext(null);
                 }
             }
 
-            head = rightHead + 1;
+            list[index] = null;
+            size--;
+
+            if(index == head) {
+                head--;
+            }
+
+//            int rightHead = -1;
+//            for (int i = 0; i < head; i++) {
+//                if (list[i] != null) {
+//                    rightHead = i;
+//                }
+//            }
+//
+//            head = rightHead + 1;
         }
 
         public String get(int index) {
@@ -121,33 +146,6 @@ public class Main {
 
             return list[list[index].getNext()].getValue();
         }
-
-//        public void optimise(Hashtable hashtable) {
-//            int first = -1;
-//            for (int i = 0; i < head; i++) {
-//                if (list[i] != null) {
-//                    first = i;
-//                    break;
-//                }
-//            }
-//
-//            if (first != -1) {
-//                for (int i = 0; i < head; i++) {
-//                    list[i] = list[i + first];
-//                }
-//
-//                head -= first;
-//
-//                Set<String> keys = hashtable.keySet();
-//                Iterator<String> itr = keys.iterator();
-//                String str;
-//
-//                while (itr.hasNext()) {
-//                    str = itr.next();
-//                    hashtable.put(str, (Integer) hashtable.get(str) - first);
-//                }
-//            }
-//        }
     }
 
     public static void main(String[] args) throws Exception {
@@ -171,8 +169,8 @@ public class Main {
                     if (index != null) {
                         list.set(index, value);
                     } else {
-                        hashtable.put(key, list.getHead());
-                        list.add(value);
+                        int place = list.add(value);
+                        hashtable.put(key, place);
                     }
                     break;
                 case "get":
